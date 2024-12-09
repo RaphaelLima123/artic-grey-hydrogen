@@ -7,6 +7,11 @@ export const CART_QUERY_FRAGMENT = `#graphql
   fragment CartLine on CartLine {
     id
     quantity
+    sellingPlanAllocation {
+      sellingPlan {
+        name
+      }
+    }
     attributes {
       key
       value
@@ -47,6 +52,20 @@ export const CART_QUERY_FRAGMENT = `#graphql
           title
           id
           vendor
+          sellingPlanGroups(first: 1) {
+            nodes {
+              sellingPlans(first: 1) {
+                nodes {
+                  id
+                }
+              }
+            }
+          }
+          variants(first: 1) {
+            nodes {
+              id
+            }
+          }
         }
         selectedOptions {
           name
@@ -108,6 +127,12 @@ export const CART_QUERY_FRAGMENT = `#graphql
   fragment CartApiQuery on Cart {
     updatedAt
     id
+    appliedGiftCards {
+      lastCharacters
+      amountUsed {
+        ...Money
+      }
+    }
     checkoutUrl
     totalQuantity
     buyerIdentity {

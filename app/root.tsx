@@ -1,5 +1,4 @@
 import {useNonce, getShopAnalytics, Analytics} from '@shopify/hydrogen';
-import {defer, type LoaderFunctionArgs} from '@netlify/remix-runtime';
 import {
   Links,
   Meta,
@@ -10,12 +9,16 @@ import {
   ScrollRestoration,
   isRouteErrorResponse,
   type ShouldRevalidateFunction,
+  defer,
 } from '@remix-run/react';
-import favicon from '~/assets/favicon.svg';
-import resetStyles from '~/styles/reset.css?url';
-import appStyles from '~/styles/app.css?url';
-import {PageLayout} from '~/components/PageLayout';
+import favicon from '~/assets/svgs/favicon.svg';
+import tailwindCss from './styles/tailwind.css?url';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
+import {Cart, Footer, Header} from './components';
+import type {FooterQuery} from 'storefrontapi.generated';
+import {useState} from 'react';
+import {CartProvider} from '@shopify/hydrogen-react';
+import type {LoaderFunctionArgs} from '@netlify/remix-runtime';
 
 export type RootLoader = typeof loader;
 
@@ -39,8 +42,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export function links() {
   return [
-    {rel: 'stylesheet', href: resetStyles},
-    {rel: 'stylesheet', href: appStyles},
+    {rel: 'stylesheet', href: tailwindCss},
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
@@ -73,6 +75,10 @@ export async function loader(args: LoaderFunctionArgs) {
     consent: {
       checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
       storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
+      withPrivacyBanner: false,
+      // localize the privacy banner
+      country: args.context.storefront.i18n.country,
+      language: args.context.storefront.i18n.language,
     },
   });
 }
@@ -94,9 +100,7 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
     // Add other queries here, so that they are loaded in parallel
   ]);
 
-  return {
-    header,
-  };
+  return {header};
 }
 
 /**
@@ -131,26 +135,49 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
 
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const toggleCart = () => setIsCartOpen((prev) => !prev);
+
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <Meta />
         <Links />
       </head>
-      <body>
-        {data ? (
-          <Analytics.Provider
-            cart={data.cart}
-            shop={data.shop}
-            consent={data.consent}
-          >
-            <PageLayout {...data}>{children}</PageLayout>
-          </Analytics.Provider>
-        ) : (
-          children
-        )}
+      <body className="min-w-full overflow-x-hidden">
+        <CartProvider>
+          {data ? (
+            <Analytics.Provider
+              cart={data.cart}
+              shop={data.shop}
+              consent={data.consent}
+            >
+              <Header header={data.header} onCartToggle={toggleCart} />
+
+              <div
+                className={`fixed top-0 right-0 z-50 h-full bg-white shadow-lg transition-all duration-500 ease-in-out ${
+                  isCartOpen
+                    ? 'w-1/3 min-w-[540px] opacity-100'
+                    : 'w-0 opacity-0'
+                }`}
+              >
+                <Cart
+                  cart={data.cart}
+                  cartOpened={isCartOpen}
+                  onToggle={toggleCart}
+                />
+              </div>
+
+              {children}
+              <Footer footer={data.footer as Promise<FooterQuery>} />
+            </Analytics.Provider>
+          ) : (
+            children
+          )}
+        </CartProvider>
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
       </body>

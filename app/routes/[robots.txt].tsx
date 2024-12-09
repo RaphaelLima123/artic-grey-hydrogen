@@ -1,5 +1,4 @@
-import {type LoaderFunctionArgs} from '@netlify/remix-runtime';
-import {useRouteError, isRouteErrorResponse} from '@remix-run/react';
+import type {LoaderFunctionArgs} from '@netlify/remix-runtime';
 import {parseGid} from '@shopify/hydrogen';
 
 export async function loader({request, context}: LoaderFunctionArgs) {
