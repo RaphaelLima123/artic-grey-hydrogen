@@ -1,98 +1,89 @@
-# Hydrogen template: Skeleton
+# Hydrogen Project
 
-Hydrogen is Shopify’s stack for headless commerce. Hydrogen is designed to dovetail with [Remix](https://remix.run/), Shopify’s full stack web framework. This template contains a **minimal setup** of components, queries and tooling to get started with Hydrogen.
+Welcome to your Hydrogen project! This repository contains a Shopify Hydrogen storefront, a framework for building custom storefronts using React and Shopify's APIs.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify/hydrogen-template)
+## Getting Started
 
-- [Check out Hydrogen docs](https://shopify.dev/custom-storefronts/hydrogen)
-- [Get familiar with Remix](https://remix.run/docs/)
+To set up and run this project locally, follow these steps:
 
-## What's included
+### Prerequisites
 
-- Remix 2
-- Hydrogen
-- Shopify CLI
-- Configured deployment to Netlify, with Server-Side Rendering (SSR) via [Netlify Edge
-  Functions](https://docs.netlify.com/edge-functions/overview/)
-- ESLint
-- Prettier
-- GraphQL generator
-- TypeScript and JavaScript flavors
-- Minimal setup of components and routes
+Ensure you have the following installed:
 
-## Getting started
+- [Node.js](https://nodejs.org/) (version 16 or higher is recommended)
+- [npm](https://www.npmjs.com/) (comes with Node.js)
 
-We highly recommend using this template to deploy a Hydrogen site to Netlify.
+### Installation
 
-**Requirements:**
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/RaphaelLima123/artic-grey-hydrogen
+   cd artic-grey-hydrogen
+   ```
 
-- Node.js version 18.0.0 or higher
-- Netlify CLI 17.0.0 or higher
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm install -g netlify-cli@latest
-```
+3. Create a `.env` file:
+   Copy the provided `.env.example` file and update the variables with your Shopify store's credentials:
+   ```bash
+   cp .env.example .env
+   ```
+   Fill in the `.env` file with the required information.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify/hydrogen-template)
+   Example `.env` file:
+   ```env
+   SESSION_SECRET="foobar"
+   PUBLIC_STOREFRONT_API_TOKEN="PUBLIC_STOREFRONT_API_TOKEN"
+   PRIVATE_STOREFRONT_API_TOKEN="PRIVATE_STOREFRONT_API_TOKEN"
+   PUBLIC_STORE_DOMAIN="example.myshopify.com"
+   PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID="PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID"
+   PUBLIC_STOREFRONT_API_VERSION="2023-04"
+   SHOP_ID=12345678
+   ```
 
-To create a new project, either click the "Deploy to Netlify" button above, or run the following command:
+### Running the Development Server
 
-```bash
-npm create @shopify/hydrogen@latest -- --template https://github.com/netlify/hydrogen-template
-```
-
-Then follow the instructions in `.env.example` and you're ready to start developing.
-
-## Local development
-
+Start the development server with the following command:
 ```bash
 npm run dev
 ```
 
-## Building for production
+This will start the server, and you can access the storefront in your browser at `http://localhost:3000`.
 
-```bash
-npm run build
+## Project Structure
+
+- **`/src`**: Contains the application code, including components, pages, and utilities.
+- **`.env.example`**: An example environment variables file for setting up the `.env` file.
+
+## Environment Variables
+
+The `.env` file should include the following variables:
+
+```env
+SESSION_SECRET="foobar"
+PUBLIC_STOREFRONT_API_TOKEN="PUBLIC_STOREFRONT_API_TOKEN"
+PRIVATE_STOREFRONT_API_TOKEN="PRIVATE_STOREFRONT_API_TOKEN"
+PUBLIC_STORE_DOMAIN="example.myshopify.com"
+PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID="PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID"
+PUBLIC_STOREFRONT_API_VERSION="2023-04"
+SHOP_ID=12345678
 ```
 
-## FAQ and Troubleshooting
+Replace the placeholder values with your Shopify store's details.
 
-## How do I configure my Hydrogen session / storefront client / customer account client / cart handler?
+## Additional Scripts
 
-See `app/lib/context.ts` and the Hydrogen documentation.
+- **`npm run build`**: Builds the application for production.
+- **`npm run start`**: Starts the production server after building.
+- **`npm run lint`**: Runs linting to ensure code quality.
 
-## How do I augment the Remix context?
+## Contributing
 
-Add your custom context to the object returned by the `createAppLoadContext` function in
-`app/lib/context.ts` and ensure the return type is updated (e.g. `HydrogenContext & {foo: string}`).
+Feel free to fork the repository and submit pull requests to contribute to this project.
 
-### How do I configure a real Shopify store in local dev?
+## License
 
-See `.env.example` and
-[these Shopify instructions](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/getting-started).
-
-### I get a 500 error on the `/accounts` pages. How do I configure real Shopify customer accounts in local dev?
-
-See [these Shopify instructions](https://shopify.dev/docs/storefronts/headless/building-with-the-customer-account-api/hydrogen).
-
-### Static assets not loading in local dev
-
-If your `.js` and `.css` files are failing to load in local development (with 404 responses), you
-may be running into an issue that occurs when `netlify dev` is run after having run a build (via
-`netlify build`, `netlify serve`, `npm run build`, or `remix vite:build`). This is a known issue
-that Netlify is working on.
-
-To fix this, delete the conflicting built functions before running your dev server:
-
-```bash
-rm -rf .netlify/edge-functions*
-npm run dev
-```
-
-### `shopify hydrogen preview` fails with `Cannot find module '@shopify/mini-oxygen'`
-
-The `shopify hydrogen preview` command has a misleading name. It previews your site in a local
-simulation of the Oxygen hosting platform. It therefore isn't compatible with a site intended to be
-deployed to Netlify.
-
-Instead, use the [Netlify CLI](https://docs.netlify.com/cli/get-started/) (e.g. `netlify serve`).
+This project is licensed under the MIT License. See the `LICENSE` file for details.
